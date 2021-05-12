@@ -23,7 +23,7 @@ metadata:
   name: bookinfo-reboot
   namespace: default
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "0 0 * * *"
   jobTemplate:
     spec:
       template:
