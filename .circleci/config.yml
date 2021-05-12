@@ -1,0 +1,19 @@
+version: 2.1
+
+workflows:
+  build-and-push:
+    jobs:
+      - build-and-push:
+          context: quay-push
+
+jobs:
+  build-and-push:
+    docker:
+      - image: cimg/base:2020.11
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - run: |
+          echo "${QUAY_ACCESS_TOKEN}" | docker login -u "${QUAY_USERNAME}" --password-stdin quay.io
+          make push

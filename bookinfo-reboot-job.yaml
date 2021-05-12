@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-reboot
+  namespace: default
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: bookinfo-reboot
+subjects:
+  - kind: ServiceAccount
+    name: bookinfo-reboot
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: bookinfo-reboot
+  namespace: default
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          containers:
+            - name: bookinfo-reboot
+              image: quay.io/tartale/tools:bookinfo-reboot-latest
+              imagePullPolicy: Always
+          serviceAccount: bookinfo-reboot
+          serviceAccountName: bookinfo-reboot
+          restartPolicy: OnFailure
